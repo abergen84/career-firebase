@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Header from './Header'
+import { PasswordForgetLink } from './PasswordForget'
 import { Form, Col, FormControl, FormGroup } from 'react-bootstrap'
 import { Link, withRouter } from 'react-router-dom';
 import { auth } from '../firebase'
@@ -11,6 +12,7 @@ const SignIn = ({history}) =>
 	<div className="login">
 		<Header />
 		<LoginCreds history={history} />
+    <PasswordForgetLink />
 	</div>	
 
 const INITIAL_STATE = {
