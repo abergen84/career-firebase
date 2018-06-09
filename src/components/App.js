@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import withAuthentication from './withAuthentication'
 
@@ -10,6 +10,7 @@ import SignIn from './SignIn'
 import PasswordForget from './PasswordForget'
 import Home from './Home'
 import Account from './Account'
+import Admin from './Admin'
 
 import * as routes from '../routes/routes'
 
@@ -25,6 +26,7 @@ const App = () =>
       <Route exact path={routes.PASSWORD_FORGET} component={ ()=> <PasswordForget /> } />
       <Route exact path={routes.HOME} component={ ()=> <Home /> } />
       <Route exact path={routes.ACCOUNT} component={ ()=> <Account /> } />
+      <Route exact path={routes.ADMIN} component={ () => <Admin /> } />
     </div>
   </Router>
 

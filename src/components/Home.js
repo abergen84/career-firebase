@@ -1,7 +1,6 @@
 import React from 'react'
-
 import withAuthorization from './withAuthorization'
-import AuthUserContext from './AuthUserContext';
+
 
 const Home = () =>
 	<div>

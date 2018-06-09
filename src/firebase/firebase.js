@@ -1,4 +1,7 @@
-import * as firebase from 'firebase'
+// import * as firebase from 'firebase'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/database'
 
 // Initialize Firebase
 const config = {
@@ -15,8 +18,10 @@ if(!firebase.apps.length) {
 }
 
 const auth = firebase.auth()
+const db = firebase.database()
 
 export {
-	auth
+  auth,
+  db
 }
 

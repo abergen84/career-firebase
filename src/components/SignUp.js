@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Header from './Header'
 import { Form, Col, FormControl, FormGroup } from 'react-bootstrap'
-import { auth } from '../firebase'
+import { auth, db } from '../firebase'
 import { withRouter } from 'react-router-dom';
 
 import * as routes from '../routes/routes'
@@ -29,14 +29,14 @@ class RegisterCreds extends Component {
 	constructor(props) {
 		super(props)
 		this.state = INITIAL_STATE
-		console.log(this.state);
+		// console.log(this.state);
 		// console.log('authered', auth);
 	}
 		
 	register(event) {
 		event.preventDefault()
-		console.log('registered')
-		console.log('state', this.state)
+		// console.log('registered')
+		// console.log('state', this.state)
 		const {
 			firstName,
 			lastName,
@@ -45,16 +45,19 @@ class RegisterCreds extends Component {
 		} = this.state
 
 		const {history} = this.props
-		console.log('history', history)
+		// console.log('history', history)
 		// console.log('auth', auth);
 
 		// firebase.auth().createUserWithEmailAndPassword(email,passwordOne)
 		// createUser(email,passwordOne)
 		auth.createUser(email,passwordOne)
-			.then(() => {
-				console.log('complete')
-				this.setState(() => ({INITIAL_STATE}))
-				history.push(routes.HOME)
+			.then((authUser) => {
+        db.createUser(authUser.user.uid, firstName,lastName, email)
+          .then(() => {
+            this.setState(() => ({INITIAL_STATE}))
+            history.push(routes.HOME)
+            // console.log('complete')
+          })
 			})
 			.catch(error => {
 				this.setState({error: error})
