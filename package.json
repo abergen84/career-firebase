@@ -7,7 +7,10 @@
     "react": "^16.4.0",
     "react-bootstrap": "^0.32.1",
     "react-dom": "^16.4.0",
-    "react-router-dom": "^4.2.2"
+    "react-redux": "^5.0.7",
+    "react-router-dom": "^4.2.2",
+    "recompose": "^0.27.1",
+    "redux": "^4.0.0"
   },
   "devDependencies": {
     "react-scripts": "1.1.4"

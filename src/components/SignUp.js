@@ -7,71 +7,88 @@ import { withRouter } from 'react-router-dom';
 import * as routes from '../routes/routes'
 
 
-const SignUp = ({history}) => 
-	<div className="register">
-		<Header />
-		<RegisterCreds history={history} />
-	</div>
-
-
-const INITIAL_STATE = {
+const INITIAL_STATE_USER = {
 	firstName: '',
 	lastName: '',
 	email: '',
 	passwordOne: '',
-	passwordTwo: '',
+  passwordTwo: '',
+  isAdmin: false,
+  type: 'user',
 	error: null
 }
 
+const INITIAL_STATE_CO = {
+  company: '',
+  email: '',
+  passwordOne: '',
+  passwordTwo: '',
+  isCompany: true,
+  error: null
+}
 
-class RegisterCreds extends Component {
+class SignUp extends Component {
+  constructor({history}){
+    super()
+    this.state = {
+      company: false,
+      history: history
+    }
+  }
+
+  toggle() {
+    this.state.company ? this.setState({company: false}) : this.setState({company: true})
+  }
+
+  render(){
+    return (
+      <div className="register">
+      { this.state.company ? <button onClick={this.toggle.bind(this)}>User? Click here</button> : <button onClick={this.toggle.bind(this)}>Company? Click here</button> } 
+        <Header />
+      { this.state.company ? <RegisterCredsCompany history={this.state.history} /> : <RegisterCredsUser history={this.state.history} /> }
+      </div>
+    )
+  }
+}
+
+
+class RegisterCredsUser extends Component {
 
 	constructor(props) {
 		super(props)
-		this.state = INITIAL_STATE
-		// console.log(this.state);
-		// console.log('authered', auth);
+    this.state = INITIAL_STATE_USER
+    
+    this.register = this.register.bind(this)
 	}
 		
 	register(event) {
 		event.preventDefault()
-		// console.log('registered')
-		// console.log('state', this.state)
+	
 		const {
 			firstName,
 			lastName,
-			email,
+      email,
+      admin,
+      type,
 			passwordOne
 		} = this.state
 
 		const {history} = this.props
-		// console.log('history', history)
-		// console.log('auth', auth);
-
-		// firebase.auth().createUserWithEmailAndPassword(email,passwordOne)
-		// createUser(email,passwordOne)
+		
 		auth.createUser(email,passwordOne)
 			.then((authUser) => {
-        db.createUser(authUser.user.uid, firstName,lastName, email)
+        db.createUser(authUser.user.uid,firstName,lastName,email,admin,type)
           .then(() => {
-            this.setState(() => ({INITIAL_STATE}))
+            this.setState(() => ({INITIAL_STATE_USER}))
             history.push(routes.HOME)
-            // console.log('complete')
           })
 			})
 			.catch(error => {
 				this.setState({error: error})
 			})
-		// ACTIONS.registerUser({
-		// 	firstname: event.currentTarget.firstname.value
-		// 	, lastname: event.currentTarget.lastname.value
-		// 	, email: event.currentTarget.username.value
-		// 	, password: event.currentTarget.password.value
-		// })
 	}	
 
 	render() {
-		//destructuring ES6
 		const {
 			firstName,
 			lastName,
@@ -87,8 +104,8 @@ class RegisterCreds extends Component {
 		return (
 			<div className="register">
 				<div className="register-form">
-				<h3>Register</h3>
-					<Form horizontal onSubmit={this.register.bind(this)}>
+				<h3>Register as User</h3>
+					<Form horizontal onSubmit={this.register}>
 					<FormGroup>
 						<Col md={2}>First Name</Col>
 						<Col md={8}>
@@ -132,8 +149,95 @@ class RegisterCreds extends Component {
 	}
 }
 
+class RegisterCredsCompany extends Component {
+
+  constructor(props) {
+		super(props)
+    this.state = INITIAL_STATE_CO
+    
+    this.register = this.register.bind(this)
+	}
+		
+	register(event) {
+		event.preventDefault()
+	
+		const {
+			company,
+			email,
+			passwordOne
+		} = this.state
+
+		const {history} = this.props
+		
+		auth.createUser(email,passwordOne)
+			.then((authUser) => {
+        db.createCompany(authUser.user.uid,company,email)
+          .then(() => {
+            this.setState(() => ({INITIAL_STATE_CO}))
+            history.push(routes.HOME)
+          })
+			})
+			.catch(error => {
+				this.setState({error: error})
+			})
+	}	
+
+	render() {
+		const {
+			company,
+			email,
+			passwordOne,
+			passwordTwo,
+			error
+		} = this.state
+
+		const isInvalid = 
+			passwordOne !== passwordTwo || passwordOne === '' || email === '' || company === ''
+
+    return (
+      <div className="register">
+				<div className="register-form">
+				<h3>Register as Company</h3>
+					<Form horizontal onSubmit={this.register}>
+					<FormGroup>
+						<Col md={2}>Company Name</Col>
+						<Col md={8}>
+							<FormControl type="text" name="company" placeholder="Company Name" value={company} onChange={e => this.setState({company: e.target.value})} />
+						</Col>
+					</FormGroup>
+					<FormGroup>
+						<Col md={2}>Email</Col>
+						<Col md={8}>
+							<FormControl type="email" name="username" placeholder="Email" value={email} onChange={e => this.setState({email: e.target.value})} />
+						</Col>
+					</FormGroup>
+					<FormGroup>
+						<Col md={2}>Password</Col>
+						<Col md={8}>
+							<FormControl type="password" name="password" placeholder="Password" value={passwordOne} onChange={e => this.setState({passwordOne: e.target.value})} />
+						</Col>
+					</FormGroup>
+						<FormGroup>
+						<Col md={2}>Password</Col>
+						<Col md={8}>
+							<FormControl type="password" name="password" placeholder="Password" value={passwordTwo} onChange={e => this.setState({passwordTwo: e.target.value})} />
+						</Col>
+					</FormGroup>
+					<FormGroup>
+						<Col md={6}>
+							<button type="submit" disabled={isInvalid}>Register</button>
+						</Col>
+					</FormGroup>
+					{ error && <p>{error.message}</p> }
+					</Form>
+				</div>
+			</div>
+    )
+  }
+}
+
 export default withRouter(SignUp)
 
 export {
-	RegisterCreds
+	RegisterCredsUser
 }
